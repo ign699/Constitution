@@ -4,7 +4,7 @@ import java.util.List;
 /**
  * Created by Jan on 01.12.2016.
  */
-public class Article {
+public class Article implements ReadableLineBasedText {
     private String article;
     List<String> lines = new LinkedList<>();
 
