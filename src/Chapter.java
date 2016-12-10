@@ -4,31 +4,28 @@ import java.util.List;
 /**
  * Created by Jan on 01.12.2016.
  */
-public class Chapter implements ReadableLineBasedText {
-    List<Article> articles = new LinkedList<>();
-    List<String> lines = new LinkedList<>();
-    String chapter;
+public class Chapter {
+    List<ReadableText> chapterContent = new LinkedList<>();
+    String chapterNumber;
 
-    public Chapter(String chapter){
-        this.chapter=chapter;
+    public Chapter(String chapterNumber){
+        this.chapterNumber=chapterNumber;
     }
 
-    public void addLine(String line){
-        this.lines.add(line);
+    public void addContent(ReadableText content){
+        this.chapterContent.add(content);
     }
 
-    public void addArticle(Article article){
-        this.articles.add(article);
-    }
 
-    public void read(){
-        System.out.println(chapter);
-        for(String line : lines){
-            System.out.println(line);
+    public String read(){
+        String fullChapter = chapterNumber;
+        for(ReadableText contentPart : chapterContent){
+            fullChapter +="\n";
+            fullChapter += contentPart.read();
         }
-        for(Article article : articles){
-            article.read();
-        }
+        return fullChapter;
     }
+
+
 
 }

@@ -13,19 +13,82 @@ public class Constitution {
         private List<Chapter> chapters = new LinkedList<>();
 
         public Constitution(String constitutionPath) {
+            loadChapters(constitutionPath);
+            loadArticles(constitutionPath);
+        }
+
+
+
+        public String readArticle (int[] article) throws Exception{
+            if(article[0]>articles.size()){
+                throw new Exception("No such article");
+            }
+            return articles.get(article[0]-1).read();
+        }
+
+
+
+        public String readArticles(int[] range) throws Exception{
+            String articlesString ="";
+            if(range[1]>articles.size() || range[0] < 0){
+                throw new Exception("No such article range");
+            }
+            if(range[1] < range[0]){
+                throw new Exception("Start article and be smaller than end article");
+            }
+            articlesString+=articles.get(range[0]-1).read();
+            for(int i = range[0]; i <= range[1]-1;i++){
+                articlesString+=("\n"+articles.get(i).read());
+            }
+            return articlesString;
+        }
+
+        public String readChapter (int[] chapter) throws Exception{
+            if(chapter[0]>chapters.size()){
+                throw new Exception("No such chapter");
+            }
+            return chapters.get(chapter[0]-1).read();
+        }
+
+        private boolean isArticle(String line){
+            return Pattern.matches("^Art\\.\\s[0-9]{1,3}.$", line);
+        }
+
+        private boolean isSubChapter(String line){
+            return Pattern.matches("^\\p{javaUpperCase}\\p{javaUpperCase}.+$", line);
+        }
+
+        private boolean isChapter (String line){
+            return Pattern.matches("^Rozdział\\s[IVXLCDM]++$", line);
+        }
+
+        private boolean isKancelaria (String line){
+            return Pattern.matches("^©Kancelaria\\sSejmu$", line);
+        }
+
+        private void createChapter(String chapterNumber, String firstSubChapter){
+            Chapter chapter = new Chapter(chapterNumber);
+            chapter.addContent(new SubChapter(firstSubChapter));
+            chapters.add(chapter);
+        }
+
+        private void updateChapter(Article article, String subChapter, int chapter){
+            article.removeHyphens();
+            articles.add(article);
+            chapters.get(chapter).addContent(article);
+            if(!subChapter.equals("")) {
+                chapters.get(chapter).addContent(new SubChapter(subChapter));
+            }
+        }
+
+        private void loadChapters(String constitutionPath){
             //Loads all chapters
             try (BufferedReader br = new BufferedReader(new FileReader(constitutionPath))) {
                 String line = br.readLine();
                 while (line != null) {
-                    //Check if is Article
-                    if (Pattern.matches("^Rozdział\\s[IVXLCDM]++$", line)) {
-                        Chapter chapter = new Chapter(line);
-                        line = br.readLine();
-                        while (line != null && !Pattern.matches("^Art\\.\\s[0-9]{1,3}\\.$", line) && !Pattern.matches("^Rozdział\\s[IVXLCDM]++$", line)) {
-                            chapter.addLine(line);
-                            line = br.readLine();
-                        }
-                        chapters.add(chapter);
+                    //Check if is Chapter
+                    if (isChapter(line)) {
+                        createChapter(line, line = br.readLine());
                     } else {
                         line = br.readLine();
                     }
@@ -33,26 +96,44 @@ public class Constitution {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
 
-            //Loads all articles
+
+        private void loadArticles(String constitutionPath){
             try (BufferedReader br = new BufferedReader(new FileReader(constitutionPath))) {
                 String line = br.readLine();
                 int chapter = -1;
                 while (line != null) {
-                    if (Pattern.matches("^Rozdział\\s[IVXLCDM]++$", line)) {
+                    if (isChapter(line)) {
                         chapter++;
                     }
+
                     //Check if is Article and add it to corresponding chapter and to article list
-                    if (Pattern.matches("^Art\\.\\s[0-9]{1,3}\\.$", line)) {
-                        Article article = new Article(line);
+                    if (isArticle(line)) {
+                        String subChapter =""; //keeps subChapter text
+                        Article article = new Article(line); // creates newArticle
                         line = br.readLine();
-                        while (line != null && !Pattern.matches("^Art\\.\\s[0-9]{1,3}\\.$", line) && !Pattern.matches("^©Kancelaria\\sSejmu$", line) && !Pattern.matches("^Rozdział\\s[IVXLCDM]++$", line)) {
-                            article.addLine(line);
-                            line = br.readLine();
+
+                        while (line != null && !isArticle(line) && !isChapter(line)) {
+                            //Skips two lines if Kancelaria appears
+                            if(isKancelaria(line)){
+                                line = br.readLine();
+                                line = br.readLine();
+                            }
+
+                            //Saves SubChapterText
+                            else if (isSubChapter(line)) {
+                                subChapter = line;
+                                line = br.readLine();
+                            }
+
+                            //adds newline to Article
+                            else {
+                                article.addLine(line);
+                                line = br.readLine();
+                            }
                         }
-                        article.removeHyphens();
-                        articles.add(article);
-                        chapters.get(chapter).addArticle(article);
+                        updateChapter(article,subChapter,chapter);
                     } else {
                         line = br.readLine();
                     }
@@ -60,32 +141,6 @@ public class Constitution {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        public void readArticle (int article) throws Exception{
-            if(article>articles.size()){
-                throw new Exception("No such article");
-            }
-            articles.get(article-1).read();
-        }
-
-        public void readArticles(int startArticle, int endArticle) throws Exception{
-            if(endArticle>articles.size() || startArticle < 0){
-                throw new Exception("No such article range");
-            }
-            if(endArticle > startArticle){
-                throw new Exception("Start article and be smaller than end article");
-            }
-            for(int i = startArticle-1; i <= endArticle-1;i++){
-                articles.get(i).read();
-            }
-        }
-
-        public void readChapter (int chapter) throws Exception{
-            if(chapter>chapters.size()){
-                throw new Exception("No such chapter");
-            }
-            chapters.get(chapter-1).read();
         }
 
 
