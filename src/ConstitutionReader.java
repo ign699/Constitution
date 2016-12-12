@@ -8,47 +8,33 @@ import java.util.Scanner;
 public class ConstitutionReader {
     public static void main(String[] args) {
 
-
-            ArgumentsParser arguments = new ArgumentsParser(args);
+        try {
+            ArgumentsParser arguments = null;
+            arguments = new ArgumentsParser(args);
             Constitution constitution = null;
+            constitution = new Constitution(arguments.getFilePath());
 
-            try {
-                constitution = new Constitution(arguments.getFilePath());
-            }
-            catch (IOException e){
-                System.out.println("No such file");
-            }
 
             String toRead = null;
-            try {
-                toRead = arguments.toRead();
-            }
-            catch (Exception e) {
-                System.out.print(e.toString());
-            }
+
+            toRead = arguments.toRead();
+
 
             if (toRead.equals("article")) {
-                try {
+
                     System.out.print(constitution.readArticle(arguments.getRange()));
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                }
+
             } else if (toRead.equals("articles")) {
-                try {
+
                     System.out.print(constitution.readArticles(arguments.getRange()));
-                } catch (Exception e) {
-                    System.out.print(e.toString());
-                }
+
             } else if (toRead.equals("chapter")) {
-                try {
+
                     System.out.print(constitution.readChapter(arguments.getRange()));
-                } catch (Exception e) {
-                    System.out.print(e.toString());
-                }
-            } else {
-                System.out.print("Invalid option");
             }
+        } catch(Exception e){
+            System.out.print(e.toString());
         }
 
-
     }
+}

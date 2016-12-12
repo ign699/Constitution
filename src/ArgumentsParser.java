@@ -6,14 +6,19 @@ public class ArgumentsParser {
     private String partToRead;
     private int[] range;
 
-    public ArgumentsParser(String [] arguments){
+    public ArgumentsParser(String [] arguments) throws Exception{
         filePath = arguments[0];
         partToRead = arguments[1];
 
         if(partToRead.equals("articles")){
             range = new int[2];
-            range[0] = Integer.parseInt(arguments[2]);
-            range[1] = Integer.parseInt(arguments[3]);
+            try {
+                range[0] = Integer.parseInt(arguments[2]);
+                range[1] = Integer.parseInt(arguments[3]);
+            }
+            catch (Exception e){
+                throw new Exception("not enough paramters or letters instead of numbers");
+            }
         }
 
 
@@ -21,7 +26,13 @@ public class ArgumentsParser {
 
         else{
             range = new int[1];
-            range[0] = Integer.parseInt(arguments[2]);
+
+            try {
+                range[0] = Integer.parseInt(arguments[2]);
+            }
+            catch (Exception e){
+                throw new Exception("not enough paramters or letters instead of numbers");
+            }
         }
     }
 
