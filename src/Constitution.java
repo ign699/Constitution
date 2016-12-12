@@ -12,7 +12,7 @@ public class Constitution {
         private List<Article> articles = new LinkedList<>();
         private List<Chapter> chapters = new LinkedList<>();
 
-        public Constitution(String constitutionPath) {
+        public Constitution(String constitutionPath) throws IOException{
             loadChapters(constitutionPath);
             loadArticles(constitutionPath);
         }
@@ -20,7 +20,7 @@ public class Constitution {
 
 
         public String readArticle (int[] article) throws Exception{
-            if(article[0]>articles.size()){
+            if(article[0]>articles.size() || article[0]<0){
                 throw new Exception("No such article");
             }
             return articles.get(article[0]-1).read();
@@ -33,9 +33,15 @@ public class Constitution {
             if(range[1]>articles.size() || range[0] < 0){
                 throw new Exception("No such article range");
             }
+
             if(range[1] < range[0]){
                 throw new Exception("Start article and be smaller than end article");
             }
+
+            if(range[0]>articles.size() || range[0]<0 || range[1]>articles.size() || range[1]<0){
+                throw new Exception("No such article");
+            }
+
             articlesString+=articles.get(range[0]-1).read();
             for(int i = range[0]; i <= range[1]-1;i++){
                 articlesString+=("\n"+articles.get(i).read());
@@ -44,7 +50,7 @@ public class Constitution {
         }
 
         public String readChapter (int[] chapter) throws Exception{
-            if(chapter[0]>chapters.size()){
+            if(chapter[0]>chapters.size() || chapter[0]<0){
                 throw new Exception("No such chapter");
             }
             return chapters.get(chapter[0]-1).read();
@@ -81,7 +87,7 @@ public class Constitution {
             }
         }
 
-        private void loadChapters(String constitutionPath){
+        private void loadChapters(String constitutionPath) throws IOException{
             //Loads all chapters
             try (BufferedReader br = new BufferedReader(new FileReader(constitutionPath))) {
                 String line = br.readLine();
@@ -94,12 +100,12 @@ public class Constitution {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IOException("No such file");
             }
         }
 
 
-        private void loadArticles(String constitutionPath){
+        private void loadArticles(String constitutionPath) throws IOException{
             try (BufferedReader br = new BufferedReader(new FileReader(constitutionPath))) {
                 String line = br.readLine();
                 int chapter = -1;
@@ -139,7 +145,7 @@ public class Constitution {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IOException("No such file");
             }
         }
 

@@ -6,10 +6,11 @@ import static org.junit.Assert.*;
  * Created by Jan on 10.12.2016.
  */
 public class ConstitutionTest {
-    Constitution constitution = new Constitution("C:\\Users\\Jan\\IdeaProjects\\Constitution\\src\\konstytucja.txt");
 
+    private Constitution constitution = null;
     @Test
     public void readArticle() throws Exception {
+        constitution = new Constitution("C:\\Users\\Jan\\IdeaProjects\\Constitution\\src\\konstytucja.txt");
         assertEquals("Art. 15.\n" +
                 "1. Ustrój terytorialny Rzeczypospolitej Polskiej zapewnia decentralizację władzy\n" +
                 "publicznej.\n" +

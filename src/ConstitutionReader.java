@@ -7,10 +7,18 @@ import java.util.Scanner;
  */
 public class ConstitutionReader {
     public static void main(String[] args) {
-        ArgumentsParser arguments;
 
-            arguments = new ArgumentsParser(args);
-            Constitution constitution = new Constitution(arguments.getFilePath());
+
+            ArgumentsParser arguments = new ArgumentsParser(args);
+            Constitution constitution = null;
+
+            try {
+                constitution = new Constitution(arguments.getFilePath());
+            }
+            catch (IOException e){
+                System.out.println("No such file");
+            }
+
             String toRead = null;
             try {
                 toRead = arguments.toRead();

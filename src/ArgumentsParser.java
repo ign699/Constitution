@@ -15,6 +15,10 @@ public class ArgumentsParser {
             range[0] = Integer.parseInt(arguments[2]);
             range[1] = Integer.parseInt(arguments[3]);
         }
+
+
+
+
         else{
             range = new int[1];
             range[0] = Integer.parseInt(arguments[2]);
