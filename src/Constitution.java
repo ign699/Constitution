@@ -20,7 +20,7 @@ public class Constitution {
 
 
         public String readArticle (int[] article) throws Exception{
-            if(article[0]>articles.size() || article[0]<0){
+            if(article[0]>articles.size() || article[0]<=0){
                 throw new Exception("No such article");
             }
             return articles.get(article[0]-1).read();
@@ -30,7 +30,7 @@ public class Constitution {
 
         public String readArticles(int[] range) throws Exception{
             String articlesString ="";
-            if(range[1]>articles.size() || range[0] < 0){
+            if(range[1]>articles.size() || range[0] <= 0){
                 throw new Exception("No such article range");
             }
 
@@ -38,7 +38,7 @@ public class Constitution {
                 throw new Exception("Start article and be smaller than end article");
             }
 
-            if(range[0]>articles.size() || range[0]<0 || range[1]>articles.size() || range[1]<0){
+            if(range[0]>articles.size() || range[0]<=0 || range[1]>articles.size() || range[1]<0){
                 throw new Exception("No such article");
             }
 
@@ -50,7 +50,7 @@ public class Constitution {
         }
 
         public String readChapter (int[] chapter) throws Exception{
-            if(chapter[0]>chapters.size() || chapter[0]<0){
+            if(chapter[0]>chapters.size() || chapter[0]<=0){
                 throw new Exception("No such chapter");
             }
             return chapters.get(chapter[0]-1).read();
